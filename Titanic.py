@@ -34,7 +34,11 @@ arquivo_atualizado = pd.get_dummies(arquivo_treino, columns=["Name", "Sex", "Tic
 arquivo_teste[arquivo_teste.isnull().any(axis=1)]
 arquivo_teste = arquivo_teste.fillna({"Cabin": "nao identificado"})
 arquivo_teste = arquivo_teste.fillna({'Age': ageNa})
-arquivo_teste.head()
+arquivo_teste.head() 
+
+teste_atualizado = pd.get_dummies(arquivo_teste, columns=["Name", "Sex", "Ticket", "Cabin", "Embarked"], prefix=["name", "sex", "ticket", "cabin", "embarked"], dtype=np.int64)
+x_teste = teste_atualizado.values
+teste_atualizado.head()
 
 y_treino = (arquivo_atualizado['Survived']).values
 x_treino = (arquivo_atualizado.drop('Survived', axis=1)).values
