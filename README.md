@@ -1,2 +1,2 @@
 # Kaggle
-It is a repository to store my solutions to kaggle challenges
+Repository to store my kaggle challenges solutions.
