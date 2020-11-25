@@ -1,56 +1,47 @@
 import numpy as np # linear algebra
-import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
-import os
-from sklearn.linear_model import LogisticRegression
+import pandas as pd # data processing
+import os #interact with operational system
+from sklearn.linear_model import LogisticRegression #machine learning model
 
-# Mostrando arquivos
+# Showing files
 for dirname, _, filenames in os.walk('/kaggle/input'):
     for filename in filenames:
         print(os.path.join(dirname, filename))
 
-# Abrindo arquivo de treino no modo leitura do módulo pandas
+# Oppening training files
 arquivo_treino = pd.read_csv("/kaggle/input/titanic/train.csv")
-arquivo_treino.head()
 
-# Abrindo arquivo de testes no modo leitura do módulo pandas
+# Openning testing file
 arquivo_teste = pd.read_csv("/kaggle/input/titanic/test.csv")
-arquivo_teste.head()
 
-# Aqui verifica-se quais elementos estão classificados como 'nulos' (falta de dados).
-# Dependendo do dado, pode-se substituir os valores faltantes pelo valor que prevalece.
-# Porem, para a nossa analise, como não há um valor que prevalece de forma expressiva, vamos substituir por um valor independente
-# Verifica-se isso com 'objetos_treino["Cabin"].value_counts()'
+# Verify missing data in training and testing files (null elements)
 arquivo_treino[arquivo_treino.isnull().any(axis=1)]
+arquivo_teste[arquivo_teste.isnull().any(axis=1)]
 
-# Retirnando valores nulos
+# Fill the missing in training and testing data
 arquivo_treino = arquivo_treino.fillna({"Cabin": "nao identificado"})
 ageNa = arquivo_treino['Age'].mean(skipna = True)
 arquivo_treino = arquivo_treino.fillna({'Age': ageNa})
 
-# Usando One Hot enconding para mudar valores
-arquivo_atualizado = pd.get_dummies(arquivo_treino, columns=["Name", "Sex", "Ticket", "Cabin", "Embarked"], prefix=["name", "sex", "ticket", "cabin", "embarked"], dtype=np.int64)
-
-# A mesma coisa para o arquivo de teste
-arquivo_teste[arquivo_teste.isnull().any(axis=1)]
 arquivo_teste = arquivo_teste.fillna({"Cabin": "nao identificado"})
 arquivo_teste = arquivo_teste.fillna({'Age': ageNa})
-arquivo_teste.head() 
 
+# Use One Hot Enconding module to change categorical data into numerical data in both files
+arquivo_atualizado = pd.get_dummies(arquivo_treino, columns=["Name", "Sex", "Ticket", "Cabin", "Embarked"], prefix=["name", "sex", "ticket", "cabin", "embarked"], dtype=np.int64)
 teste_atualizado = pd.get_dummies(arquivo_teste, columns=["Name", "Sex", "Ticket", "Cabin", "Embarked"], prefix=["name", "sex", "ticket", "cabin", "embarked"], dtype=np.int64)
-x_teste = teste_atualizado.values
-teste_atualizado.head()
 
+
+# Get the testing data and the corresponding result separately
 y_treino = (arquivo_atualizado['Survived']).values
 x_treino = (arquivo_atualizado.drop('Survived', axis=1)).values
 
-arquivo_atualizado.head()
+# Get the testing data separately
+x_teste = teste_atualizado.values
 
-arquivo_atualizado.dtypes
-arquivo_atualizado.isnull().sum()
-
+# Create a object LogisticRegression
 molde = LogisticRegression()
-molde.fit(x_treino,y_treino)
-y_teste = molde.predict(x_teste)
+molde.fit(x_treino,y_treino) #Fiting training data into the module
+y_teste = molde.predict(x_teste) # Predict testing data results
 saida = pd.DataFrame({'PassengerId': teste_atualizado.PassengerId, 'Survived': y_teste})
 saida.to_csv('my_submission.csv', index=False)
 print("Your submission was successfully saved!")
