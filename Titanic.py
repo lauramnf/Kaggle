@@ -18,10 +18,11 @@ arquivo_teste = pd.read_csv("/kaggle/input/titanic/test.csv")
 arquivo_treino[arquivo_treino.isnull().any(axis=1)]
 arquivo_teste[arquivo_teste.isnull().any(axis=1)]
 
+# Calculate mean of ages
+ageNa = arquivo_treino['Age'].mean(skipna = True)
 # Fill the missing in training and testing data
 arquivo_treino = arquivo_treino.fillna({"Cabin": "nao identificado"})
-ageNa = arquivo_treino['Age'].mean(skipna = True)
-arquivo_treino = arquivo_treino.fillna({'Age': ageNa})
+arquivo_treino = arquivo_treino.fillna({'Age': ageNa}) # Fill missing data with ages dataset mean
 
 arquivo_teste = arquivo_teste.fillna({"Cabin": "nao identificado"})
 arquivo_teste = arquivo_teste.fillna({'Age': ageNa})
