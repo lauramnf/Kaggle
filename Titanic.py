@@ -46,3 +46,21 @@ y_teste = molde.predict(x_teste) # Predict testing data results
 saida = pd.DataFrame({'PassengerId': passenger_id, 'Survived': y_teste})
 saida.to_csv('my_submission.csv', index=False)
 print("Your submission was successfully saved!")
+
+# Read my model submission
+with open('my_submission.csv', 'r') as my_sub:
+    my_lines = my_sub.readlines()
+
+# Read answer file
+with open('certo.csv', 'r') as certo_sub:
+    certo_lines = certo_sub.readlines()
+
+# Verify model's accuracy
+diff = 0
+for my_line, certo_line in zip(my_lines, certo_lines):
+    if my_line != certo_line: # Check compatible lines
+        diff += 1
+
+perc = 100*(1-diff/len(my_lines))
+print('Your model\'s accuracy is: ', end = '')
+print(f'{perc:.2f}%')
