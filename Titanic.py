@@ -12,15 +12,13 @@ def verify_accuracy(submission_file, answer_file):
     with open(answer_file, 'r') as certo_sub:
         certo_lines = certo_sub.readlines()
 
-    # Verify model's accuracy
     diff = 0
     for my_line, certo_line in zip(my_lines, certo_lines):
         if my_line != certo_line: # Check compatible lines
             diff += 1
 
-    perc = 100*(1-diff/len(my_lines))
-    print('Your model\'s has accuracy of: ', end = '')
-    return f'{perc:.2f}%'
+    perc = 100*(1-diff/len(my_lines)) # Accuracy percentage
+    return f'Your model has accuracy of: {perc:.2f}%'
 
 # Oppening training files
 arquivo_treino = pd.read_csv("train.csv")
@@ -39,8 +37,8 @@ arquivo_treino[arquivo_treino.isnull().any(axis=1)]
 arquivo_teste[arquivo_teste.isnull().any(axis=1)]
 
 # Fill the missing data
+ageNa = arquivo_treino['Age'].mean(skipna = True) # Get age's mean
 # Training data
-ageNa = arquivo_treino['Age'].mean(skipna = True)
 arquivo_treino = arquivo_treino.fillna({'Fare': 0})
 arquivo_treino = arquivo_treino.fillna({'Age': ageNa})
 # Testing data
@@ -66,4 +64,4 @@ saida = pd.DataFrame({'PassengerId': passenger_id, 'Survived': y_teste})
 saida.to_csv('my_submission.csv', index=False)
 print("Your submission was successfully saved!")
 
-print(verify_accuracy('my_submission.csv','certo.csv'))
+print(verify_accuracy('my_submission.csv','certo.csv')) # Print accuracy
